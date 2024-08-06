@@ -1,0 +1,16 @@
+{
+  "name": "webcam_twitch_tv_free",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@electron/remote": "^2.1.2",
+    "electron": "^31.3.1"
+  }
+}
