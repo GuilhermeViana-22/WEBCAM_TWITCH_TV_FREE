@@ -11,15 +11,49 @@ navigator.mediaDevices.getUserMedia({ video: true })
         console.error('Erro ao acessar a webcam:', error);
     });
 
-// Adiciona um ouvinte para o evento mousedown na video-container para arrastar a janela
-const { ipcRenderer } = require('electron');
 
-// Obtém a referência ao container de vídeo
+// Funções para arrastar a janela
+const { BrowserWindow } = require('@electron/remote');
+
+let isDragging = false;
+let startX;
+let startY;
+let startLeft;
+let startTop;
+
 const videoContainer = document.querySelector('.video-container');
 
-// Adiciona o evento mousedown para iniciar o arrasto
+// Início do arrasto
 videoContainer.addEventListener('mousedown', (event) => {
-    if (event.button === 0) {
-        ipcRenderer.send('start-drag');
+    isDragging = true;
+    startX = event.clientX;
+    startY = event.clientY;
+    
+    const currentWindow = BrowserWindow.getFocusedWindow();
+    if (currentWindow) {
+        const { x, y } = currentWindow.getBounds();
+        startLeft = x;
+        startTop = y;
     }
+    event.preventDefault();
+});
+
+// Movendo a janela enquanto arrasta
+document.addEventListener('mousemove', (event) => {
+    if (isDragging) {
+        const currentWindow = BrowserWindow.getFocusedWindow();
+        if (currentWindow) {
+            const deltaX = event.clientX - startX;
+            const deltaY = event.clientY - startY;
+            currentWindow.setBounds({
+                x: startLeft + deltaX,
+                y: startTop + deltaY
+            });
+        }
+    }
+});
+
+// Finaliza o arrasto
+document.addEventListener('mouseup', () => {
+    isDragging = false;
 });
